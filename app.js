@@ -45,6 +45,10 @@ app.get('/about',function(req,res){
       res.render('about');
 });
 
+app.get('/ideas/add',function(req,res){
+    res.render('./ideas/add');
+  });
+
 var port = 5000;
 
 app.listen(port,function(){
