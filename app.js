@@ -62,7 +62,6 @@ app.post('/ideas', (req, res) => {
     }
     
     if(!req.body.details){
-        console.log('hello');
       errors.push({text:'Please add some details'});
     }
   
@@ -73,7 +72,15 @@ app.post('/ideas', (req, res) => {
         details: req.body.details
       });
     } else {
-      res.send('passed');
+      var newUser={
+          title: req.body.title,
+          details: req.body.details
+      }
+      new Idea(newUser)
+      .save()
+      .then(idea=>{
+          res.redirect('/ideas');
+      })
     }
   });
 

@@ -13,7 +13,7 @@ var IdeaSchema = new Schema({
   },
   date:{
       type:Date,
-      dafault:Date.now
+      default:Date.now
   }
 });
 
