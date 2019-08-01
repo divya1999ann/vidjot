@@ -1,4 +1,5 @@
 var express = require('express');
+var path= require('path');
 var exphbs  = require('express-handlebars');
 var mongoose = require('mongoose');
 var bodyParser=require('body-parser');
@@ -41,6 +42,8 @@ app.use(function(req,res,next){
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+//static folder
+app.use(express.static(path.join(__dirname,'public')));
 
 //middleware for express session
 app.use(session({
