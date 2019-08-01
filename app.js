@@ -2,7 +2,15 @@ var express = require('express');
 var exphbs  = require('express-handlebars');
 var mongoose = require('mongoose');
 var bodyParser=require('body-parser');
+var methodOverride = require('method-override')
+var flash =require('connect-flash');
+var session = require('express-session');
 var app = express();
+
+
+//load routes
+var ideas= require('./routes/ideas');
+var users=require('./routes/users');
 
 //map global promise
 mongoose.Promise=global.Promise;
@@ -16,9 +24,6 @@ mongoose.connect('mongodb://localhost/vidjot-dev',{
 })
 .catch(err=>console.log(err));
 
-//load idea model
-require('./models/ideas')
-var Idea=mongoose.model('ideas');
 
 app.engine('handlebars', exphbs({
     defaultLayout:'main'
@@ -33,8 +38,30 @@ app.use(function(req,res,next){
 });
 
 //body-parser middleware
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+
+//middleware for express session
+app.use(session({
+    secret: 'secret',
+    resave: true,
+    saveUninitialized: true,
+    
+  }));
+
+app.use(flash());
+
+//global variables
+app.use(function(req,res,next){
+    res.locals.success_msg=req.flash('success_msg');
+    res.locals.error_msg=req.flash('error_msg');
+    res.locals.error = req.flash('error');
+    next();
+});
+
+//method override middelware
+app.use(methodOverride('_method'));
 
 //index port
 app.get('/',function(req,res){
@@ -49,40 +76,12 @@ app.get('/about',function(req,res){
       res.render('about');
 });
 
-app.get('/ideas/add',function(req,res){
-    res.render('./ideas/add');
-  });
 
-//process
-app.post('/ideas', (req, res) => {
-    let errors = [];
-  
-    if(!req.body.title){
-      errors.push({text:'Please add a title'});
-    }
-    
-    if(!req.body.details){
-      errors.push({text:'Please add some details'});
-    }
-  
-    if(errors.length > 0){
-      res.render('./ideas/add', {
-        errors: errors,
-        title: req.body.title,
-        details: req.body.details
-      });
-    } else {
-      var newUser={
-          title: req.body.title,
-          details: req.body.details
-      }
-      new Idea(newUser)
-      .save()
-      .then(idea=>{
-          res.redirect('/ideas');
-      })
-    }
-  });
+
+
+//use routes
+app.use('/ideas',ideas);
+app.use('/users',users);
 
 var port = 5000;
 
