@@ -1,7 +1,19 @@
 var express = require('express');
 var exphbs  = require('express-handlebars');
+var mongoose = require('mongoose');
 var app = express();
 
+//map global promise
+mongoose.Promise=global.Promise;
+
+//connect to mongoose
+mongoose.connect('mongodb://localhost/vidjot-dev',{
+
+})
+.then(function(){
+    console.log('Mongo DB Connected...');
+})
+.catch(err=>console.log(err));
 
 app.engine('handlebars', exphbs({
     defaultLayout:'main'
