@@ -15,6 +15,10 @@ mongoose.connect('mongodb://localhost/vidjot-dev',{
 })
 .catch(err=>console.log(err));
 
+//load idea model
+require('./models/ideas')
+var Idea=mongoose.model('ideas');
+
 app.engine('handlebars', exphbs({
     defaultLayout:'main'
 }));
@@ -22,7 +26,7 @@ app.set('view engine', 'handlebars');
 
 //HOW Middleware works
 app.use(function(req,res,next){
-    req.name="Dak1999";
+    
     //console.log(Date.now());
     next();
 });
